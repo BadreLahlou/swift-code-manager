@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache:config
+    xmlns:ehcache="http://www.ehcache.org/v3"
+    xmlns:jcache="http://www.ehcache.org/v3/jsr107">
+    <ehcache:cache alias="swiftCodes">
+        <ehcache:key-type>java.lang.String</ehcache:key-type>
+        <ehcache:value-type>com.swift.manager.dto.response.SwiftCodeResponseDto</ehcache:value-type>
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">30</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">1000</ehcache:heap>
+    </ehcache:cache>
+    <ehcache:cache alias="countryCodes">
+        <ehcache:key-type>java.lang.String</ehcache:key-type>
+        <ehcache:value-type>java.util.List</ehcache:value-type>
+        <ehcache:expiry>
+            <ehcache:ttl unit="hours">1</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">100</ehcache:heap>
+    </ehcache:cache>
+</ehcache:config>

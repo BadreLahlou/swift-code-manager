@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: swiftdb
+      POSTGRES_USER: swiftuser
+      POSTGRES_PASSWORD: swiftpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - swift-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U swiftuser"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  application:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/swiftdb
+      SPRING_DATASOURCE_USERNAME: swiftuser
+      SPRING_DATASOURCE_PASSWORD: swiftpass
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - swift-network
+
+networks:
+  swift-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

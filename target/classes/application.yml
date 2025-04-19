@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: swift-code-manager
+  datasource:
+    url: jdbc:postgresql://localhost:5432/swiftdb
+    username: swiftuser
+    password: swiftpass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        '[format_sql]': true
+        cache:
+          '[use_second_level_cache]': true
+          '[use_query_cache]': true
+          '[region.factory_class]': org.hibernate.cache.jcache.JCacheRegionFactory
+        javax:
+          cache:
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
+  cache:
+    type: jcache
+    jcache:
+      config: classpath:ehcache.xml
+server:
+  port: 8080
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus

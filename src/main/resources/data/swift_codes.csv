@@ -1,0 +1,4 @@
+swiftCode,address,bankName,countryISO2,countryName,isHeadquarter,headquarterCode
+DEUTDEFF,"Taunusanlage 12, Frankfurt","Deutsche Bank","DE","Germany",true,DEUTDEFF
+DEUTDEMM,"Theodor-Heuss-Allee 72, Munich","Deutsche Bank","DE","Germany",false,DEUTDEFF
+BOFAUS3N,"225 Liberty Street, New York","Bank of America","US","United States",true,BOFAUS3N
