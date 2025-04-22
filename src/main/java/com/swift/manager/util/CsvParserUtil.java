@@ -18,9 +18,9 @@ public class CsvParserUtil {
                 new InputStreamReader(
                         CsvParserUtil.class.getClassLoader().getResourceAsStream(fileName)))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine(); 
             while ((line = br.readLine()) != null) {
-                // Use a CSV parser to handle quoted fields correctly
+                
                 String[] data = line.split(",(?=(?:[^\"']*\"[^\"']*\")*[^\"']*$)");
                 SwiftCode code = new SwiftCode();
                 code.setSwiftCode(data[0].replaceAll("[\"']", "").trim());
