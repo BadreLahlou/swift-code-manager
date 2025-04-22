@@ -1,0 +1,3 @@
+com\swift\manager\validation\SwiftCodeValidatorTest.class
+com\swift\manager\controller\SwiftCodeControllerIntegrationTest.class
+com\swift\manager\service\SwiftCodeServiceTest.class

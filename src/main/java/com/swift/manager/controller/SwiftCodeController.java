@@ -3,12 +3,19 @@ package com.swift.manager.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.swift.manager.dto.request.SwiftCodeRequestDto;
-import com.swift.manager.dto.response.SwiftCodeResponseDto;
 import com.swift.manager.dto.response.CountrySwiftCodesResponse;
+import com.swift.manager.dto.response.SwiftCodeResponseDto;
 import com.swift.manager.service.SwiftCodeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +26,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/swift-codes")
-@Tag(name = "SWIFT Code Management", description = "Endpoints for managing SWIFT codes")
+@Tag(name = "Swift Code API", description = "API for managing SWIFT codes")
 public class SwiftCodeController {
 
     private final SwiftCodeService service;
@@ -29,12 +36,12 @@ public class SwiftCodeController {
     }
 
     @Operation(summary = "Add a new SWIFT code", responses = {
-        @ApiResponse(responseCode = "200", description = "SWIFT code added successfully")
+        @ApiResponse(responseCode = "201", description = "SWIFT code added successfully")
     })
     @PostMapping
-    public ResponseEntity<Map<String, String>> addSwiftCode(@Valid @RequestBody SwiftCodeRequestDto request) {
-        String message = service.addSwiftCode(request);
-        return ResponseEntity.ok(Map.of("message", message));
+    public ResponseEntity<SwiftCodeResponseDto> addSwiftCode(@RequestBody @Valid SwiftCodeRequestDto request) {
+        SwiftCodeResponseDto response = service.addSwiftCode(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "Get SWIFT code details", responses = {

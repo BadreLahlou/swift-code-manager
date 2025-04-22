@@ -1,14 +1,15 @@
 package com.swift.manager.service;
 
-import com.swift.manager.dto.request.SwiftCodeRequestDto;
-import com.swift.manager.dto.response.SwiftCodeResponseDto;
-import com.swift.manager.dto.response.CountrySwiftCodesResponse;
 import java.util.List;
 
+import com.swift.manager.dto.request.SwiftCodeRequestDto;
+import com.swift.manager.dto.response.CountrySwiftCodesResponse;
+import com.swift.manager.dto.response.SwiftCodeResponseDto;
+
 public interface SwiftCodeService {
-    Object getSwiftCodeDetails(String swiftCode);
+    SwiftCodeResponseDto getSwiftCodeDetails(String swiftCode);
     CountrySwiftCodesResponse findByCountry(String countryISO2);
-    String addSwiftCode(SwiftCodeRequestDto request);
+    SwiftCodeResponseDto addSwiftCode(SwiftCodeRequestDto request);
     String deleteSwiftCode(String swiftCode);
     List<SwiftCodeResponseDto> findBranches(String headquarterCode);
 }

@@ -1,0 +1,29 @@
+# Docker Compose for Swift Code Manager
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: swiftdb
+      POSTGRES_USER: swiftuser
+      POSTGRES_PASSWORD: swiftpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/swiftdb
+      SPRING_DATASOURCE_USERNAME: swiftuser
+      SPRING_DATASOURCE_PASSWORD: swiftpass
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src/main/resources/data:/app/data
+volumes:
+  pgdata:

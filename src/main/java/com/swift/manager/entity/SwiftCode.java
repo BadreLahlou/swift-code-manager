@@ -1,19 +1,21 @@
 package com.swift.manager.entity;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cache;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "swift_codes",
     indexes = {
         @Index(name = "idx_headquarter_code", columnList = "headquarterCode"),
-        @Index(name = "idx_country_iso2", columnList = "countryISO2"),
+        @Index(name = "idx_country_iso2", columnList = "countryiso2"),
         @Index(name = "idx_swift_code", columnList = "swiftCode")
     }
 )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SwiftCode {
     @Id
     @Column(length = 11)
@@ -25,7 +27,7 @@ public class SwiftCode {
     @Column(nullable = false)
     private String bankName;
 
-    @Column(length = 2, nullable = false)
+    @Column(name = "countryiso2", length = 2, nullable = false)
     private String countryISO2;
 
     @Column(nullable = false)

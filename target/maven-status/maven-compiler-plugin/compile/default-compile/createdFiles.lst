@@ -1,3 +1,5 @@
+com\swift\manager\dto\response\SwiftCodeBranchDto.class
+com\swift\manager\dto\response\SwiftCodeWithBranchesResponse.class
 com\swift\manager\dto\response\ErrorResponse.class
 com\swift\manager\exception\SwiftCodeNotFoundException.class
 com\swift\manager\controller\SwiftCodeController.class
@@ -13,4 +15,5 @@ com\swift\manager\entity\SwiftCode.class
 com\swift\manager\validation\ValidSwiftCode.class
 com\swift\manager\config\MetricsConfig.class
 com\swift\manager\service\SwiftCodeService.class
+com\swift\manager\dto\response\CountrySwiftCodesResponse.class
 com\swift\manager\loader\DataLoader.class

@@ -1,14 +1,7 @@
 package com.swift.manager.service.impl;
 
-import com.swift.manager.dto.request.SwiftCodeRequestDto;
-import com.swift.manager.dto.response.SwiftCodeResponseDto;
-import com.swift.manager.dto.response.SwiftCodeWithBranchesResponse;
-import com.swift.manager.dto.response.SwiftCodeBranchDto;
-import com.swift.manager.dto.response.CountrySwiftCodesResponse;
-import com.swift.manager.entity.SwiftCode;
-import com.swift.manager.exception.SwiftCodeNotFoundException;
-import com.swift.manager.repository.SwiftCodeRepository;
-import com.swift.manager.service.SwiftCodeService;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,7 +9,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.swift.manager.dto.request.SwiftCodeRequestDto;
+import com.swift.manager.dto.response.CountrySwiftCodesResponse;
+import com.swift.manager.dto.response.SwiftCodeBranchDto;
+import com.swift.manager.dto.response.SwiftCodeResponseDto;
+import com.swift.manager.entity.SwiftCode;
+import com.swift.manager.exception.SwiftCodeNotFoundException;
+import com.swift.manager.repository.SwiftCodeRepository;
+import com.swift.manager.service.SwiftCodeService;
 
 @Service
 public class SwiftCodeServiceImpl implements SwiftCodeService {
@@ -32,7 +32,7 @@ public class SwiftCodeServiceImpl implements SwiftCodeService {
     @Override
     @Transactional
     @CacheEvict(value = {"swiftCodes", "countryCodes"}, allEntries = true)
-    public String addSwiftCode(SwiftCodeRequestDto request) {
+    public SwiftCodeResponseDto addSwiftCode(SwiftCodeRequestDto request) {
         SwiftCode swiftCode = new SwiftCode();
         swiftCode.setSwiftCode(request.getSwiftCode());
         swiftCode.setAddress(request.getAddress());
@@ -43,30 +43,32 @@ public class SwiftCodeServiceImpl implements SwiftCodeService {
         swiftCode.setHeadquarterCode(request.getHeadquarterCode());
         repository.save(swiftCode);
         logger.info("Added new SWIFT code: {}", swiftCode.getSwiftCode());
-        return "SWIFT code added successfully.";
+        SwiftCodeResponseDto resp = new SwiftCodeResponseDto();
+        resp.setSwiftCode(swiftCode.getSwiftCode());
+        resp.setAddress(swiftCode.getAddress());
+        resp.setBankName(swiftCode.getBankName());
+        resp.setCountryISO2(swiftCode.getCountryISO2());
+        resp.setCountryName(swiftCode.getCountryName());
+        resp.setHeadquarter(swiftCode.isHeadquarter());
+        resp.setHeadquarterCode(swiftCode.getHeadquarterCode());
+        return resp;
     }
 
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "swiftCodes", key = "#swiftCode")
-    public Object getSwiftCodeDetails(String swiftCode) {
+    public SwiftCodeResponseDto getSwiftCodeDetails(String swiftCode) {
         SwiftCode code = repository.findBySwiftCode(swiftCode)
                 .orElseThrow(() -> new SwiftCodeNotFoundException("Swift code not found: " + swiftCode));
-        if (code.isHeadquarter()) {
-            List<SwiftCode> branches = repository.findBranchesByHeadquarter(code.getSwiftCode());
-            SwiftCodeWithBranchesResponse resp = new SwiftCodeWithBranchesResponse();
-            resp.setSwiftCode(code.getSwiftCode());
-            resp.setAddress(code.getAddress());
-            resp.setBankName(code.getBankName());
-            resp.setCountryISO2(code.getCountryISO2());
-            resp.setCountryName(code.getCountryName());
-            resp.setHeadquarter(true);
-            resp.setBranches(branches.stream().map(this::mapToBranchDto).toList());
-            return resp;
-        } else {
-            SwiftCodeBranchDto resp = mapToBranchDto(code);
-            return resp;
-        }
+        SwiftCodeResponseDto resp = new SwiftCodeResponseDto();
+        resp.setSwiftCode(code.getSwiftCode());
+        resp.setAddress(code.getAddress());
+        resp.setBankName(code.getBankName());
+        resp.setCountryISO2(code.getCountryISO2());
+        resp.setCountryName(code.getCountryName());
+        resp.setHeadquarter(code.isHeadquarter());
+        resp.setHeadquarterCode(code.getHeadquarterCode());
+        return resp;
     }
 
     @Override

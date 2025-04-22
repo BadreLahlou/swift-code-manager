@@ -30,9 +30,10 @@ class SwiftCodeValidatorTest {
 
     @Test
     void invalidSwiftCode() {
-        assertFalse(validator.isValid("DEUTDEF", context));
-        assertFalse(validator.isValid("DEUTDEFFXXXX", context));
-        assertFalse(validator.isValid("deutdeff", context));
+        assertFalse(validator.isValid("DEUTDEF", context)); // 7 chars, invalid
+        assertFalse(validator.isValid("DEUTDEFFXXXX", context)); // 12 chars, invalid
+        assertFalse(validator.isValid("deutdeff", context)); // lowercase, invalid
+        assertFalse(validator.isValid("12345678", context)); // digits only, invalid
         assertFalse(validator.isValid(null, context));
     }
 }

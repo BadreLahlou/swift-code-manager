@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +25,7 @@ import com.swift.manager.repository.SwiftCodeRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@ActiveProfiles("test")
 @SuppressWarnings({"unused", "resource"})
 class SwiftCodeControllerIntegrationTest {
     @Container
@@ -87,5 +90,58 @@ class SwiftCodeControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.swiftCode").value("BOFAUS3N"));
+    }
+
+    @Test
+    void getSwiftCodesByCountry() throws Exception {
+        mockMvc.perform(get("/v1/swift-codes/country/DE")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.countryISO2").value("DE"))
+            .andExpect(jsonPath("$.swiftCodes").isArray());
+    }
+
+    @Test
+    void deleteSwiftCodeSuccess() throws Exception {
+        mockMvc.perform(delete("/v1/swift-codes/DEUTDEFF"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("SWIFT code deleted successfully."));
+    }
+
+    @Test
+    void deleteSwiftCodeNotFound() throws Exception {
+        mockMvc.perform(delete("/v1/swift-codes/INVALID"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.errorCode").value("SWIFT_CODE_NOT_FOUND"));
+    }
+
+    @Test
+    void addSwiftCodeInvalidInput() throws Exception {
+        SwiftCodeRequestDto request = new SwiftCodeRequestDto();
+        // Missing required fields
+        mockMvc.perform(post("/v1/swift-codes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorCode").value("INVALID_INPUT"));
+    }
+
+    @Test
+    void getBranchesForHeadquarter() throws Exception {
+        // Add a branch for the headquarter
+        SwiftCode branch = new SwiftCode();
+        branch.setSwiftCode("DEUTDEMM");
+        branch.setAddress("Munich");
+        branch.setBankName("Deutsche Bank");
+        branch.setCountryISO2("DE");
+        branch.setCountryName("Germany");
+        branch.setHeadquarter(false);
+        branch.setHeadquarterCode("DEUTDEFF");
+        repository.save(branch);
+
+        mockMvc.perform(get("/v1/swift-codes/branches/DEUTDEFF")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].swiftCode").value("DEUTDEMM"));
     }
 }
